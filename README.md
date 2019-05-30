@@ -22,6 +22,8 @@ log.AddHook(boltHook)
 		"number": "1",
 	}).Info("Kenny")
 ```
+To see the result of the logging, you could use [bolter](https://github.com/hasit/bolter)
+
 # Resources
 This hook uses two dependencies of libary :
 1. [logrus](https://github.com/sirupsen/logrus)
