@@ -10,12 +10,14 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	boltlogrus "github.com/kennykarnama/logrus-bolt-hook"
+	"github.com/kennykarnama/logrus-bolt-hook/mocks"
 	log "github.com/sirupsen/logrus"
 )
 
 func TestLogging(t *testing.T) {
 	t.Run("LogSuccess", func(t *testing.T) {
-		mockGenerator := boltlogrus.NewMockUniqueID()
+		mockGenerator := new(mocks.UniqueID)
+		mockGenerator.On("GenerateID").Return("UNIK", nil)
 		boltHook := boltlogrus.NewBoltHook(boltlogrus.Dbpath("customlog.db"), boltlogrus.IDGenerator(mockGenerator))
 		log.AddHook(boltHook)
 		var b bytes.Buffer
