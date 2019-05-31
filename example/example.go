@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/kennykarnama/logrus-bolt-hook/boltlogrus"
+	boltlogrus "github.com/kennykarnama/logrus-bolt-hook"
 	log "github.com/sirupsen/logrus"
 )
 
