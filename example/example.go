@@ -11,6 +11,6 @@ func main() {
 	log.WithFields(log.Fields{
 		"animal": "Dog",
 		"number": "1",
-	}).Info("Kenny")
+	}).Info("Lingo")
 
 }
