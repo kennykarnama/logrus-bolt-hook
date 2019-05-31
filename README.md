@@ -38,6 +38,8 @@ silentLog.SetOutput(&b)
 //Same goes here, add your newhook
 ```
 
+or just use, `ioutil.Discard`
+
 # Resources
 This hook uses two dependencies of libary :
 1. [logrus](https://github.com/sirupsen/logrus)
