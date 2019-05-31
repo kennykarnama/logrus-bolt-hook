@@ -28,6 +28,16 @@ To see the result of the logging, you could use [bolter](https://github.com/hasi
 If you want to implement your own IDGenerator, you just need to implement the interface specified in `uniqueid.go`
 Register your new IDGenerator by using `IDGenerator(youOwn)` inside the function of NewBoltHook. You could take a look in [hook_test.go](https://github.com/kennykarnama/logrus-bolt-hook/blob/master/hook_test.go)
 
+# Silent the log
+Sometimes you may need to not display the log message to your default terminal console. This may happen when you use multiple hook. Same thing will be logged twice inside your terminal console. hmm, you don't like, do you. So to prevent this, you could try this :
+
+```
+silentLog := logrus.New()
+var b bytes.Buffer
+silentLog.SetOutput(&b)
+//Same goes here, add your newhook
+```
+
 # Resources
 This hook uses two dependencies of libary :
 1. [logrus](https://github.com/sirupsen/logrus)
