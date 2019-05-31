@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/boltdb/bolt"
-	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -12,6 +11,7 @@ import (
 //give the ability for user
 //in order to configure bolt hook
 type HookOptions struct {
+	IDGenerator UniqueID
 	Dbpath      string
 	FileMode    os.FileMode
 	BoltOptions *bolt.Options
@@ -19,6 +19,16 @@ type HookOptions struct {
 
 //HookOption will handle the options given
 type HookOption func(*HookOptions)
+
+//IDGenerator is a function to set
+//key generator that will be used
+//when we would like to store the log
+//inside boltdb
+func IDGenerator(uid UniqueID) HookOption {
+	return func(args *HookOptions) {
+		args.IDGenerator = uid
+	}
+}
 
 //Dbpath is a function to set the option
 func Dbpath(dbpath string) HookOption {
@@ -42,13 +52,15 @@ func BoltOptions(opts *bolt.Options) HookOption {
 }
 
 type boltHook struct {
-	db *bolt.DB
+	db          *bolt.DB
+	idGenerator UniqueID
 }
 
 //NewBoltHook will return new hook for logrus
 func NewBoltHook(options ...HookOption) log.Hook {
 
 	defaultOptions := &HookOptions{
+		IDGenerator: NewSatoru(),
 		Dbpath:      "log.db",
 		FileMode:    0600,
 		BoltOptions: nil,
@@ -64,7 +76,7 @@ func NewBoltHook(options ...HookOption) log.Hook {
 		log.Fatal(err)
 	}
 
-	return &boltHook{boltDb}
+	return &boltHook{boltDb, defaultOptions.IDGenerator}
 }
 
 func (bh *boltHook) Fire(entry *log.Entry) error {
@@ -73,12 +85,15 @@ func (bh *boltHook) Fire(entry *log.Entry) error {
 		if err != nil {
 			return err
 		}
-		uid := uuid.NewV4()
+		uid, err := bh.idGenerator.GenerateID()
+		if err != nil {
+			return err
+		}
 		str, err := entry.String()
 		if err != nil {
 			return err
 		}
-		err = bucket.Put([]byte(uid.String()), []byte(str))
+		err = bucket.Put([]byte(uid), []byte(str))
 		return err
 	})
 	err = bh.Flush()
